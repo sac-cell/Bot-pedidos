@@ -19,7 +19,7 @@ echo [1/3] Instalando dependencias...
 pip install playwright -q
 
 echo [2/3] Instalando navegador...
-playwright install chromium
+python -m playwright install chromium
 
 echo [3/3] Configuracao concluida!
 echo.
