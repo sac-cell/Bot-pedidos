@@ -8,19 +8,32 @@ echo Verificando Python...
 python --version >nul 2>&1
 if errorlevel 1 (
     echo.
-    echo [ERRO] Python nao encontrado!
+    echo Python nao encontrado! Baixando automaticamente...
+    echo Isso pode demorar 1-2 minutos.
     echo.
-    echo Baixe o Python em:
-    echo https://www.python.org/downloads/
-    echo.
-    echo IMPORTANTE: Marque a opcao "Add Python to PATH"!
-    echo Depois de instalar, rode este arquivo novamente.
-    echo.
-    pause
-    exit /b 1
+    
+    curl -L -o "%TEMP%\python-installer.exe" "https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe"
+    
+    if not exist "%TEMP%\python-installer.exe" (
+        echo.
+        echo ERRO: Nao foi possivel baixar o Python!
+        echo Baixe manualmente: https://www.python.org/downloads/
+        pause
+        exit /b 1
+    )
+    
+    echo Instalando Python (pode pedir permissao)...
+    "%TEMP%\python-installer.exe" /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+    timeout /t 15 /nobreak >nul
+    del "%TEMP%\python-installer.exe" >nul 2>&1
+    
+    set "PATH=%PATH%;C:\Program Files\Python311;C:\Program Files\Python311\Scripts"
+    
+    echo Python instalado!
+) else (
+    echo Python encontrado!
 )
 
-echo Python encontrado!
 echo.
 echo Instalando playwright...
 python -m pip install playwright -q
